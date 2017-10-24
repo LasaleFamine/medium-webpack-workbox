@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Webpack + Workbox</title>
+
+    <style>
+      body {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-image: linear-gradient(-90deg, #77FF00, #00CCFF);
+        flex-direction: column;
+      }
+
+      h1 {
+        font-size: 10vw;
+        display: block;
+        user-select: none;
+        color: #FFF;
+        white-space: nowrap;
+        cursor: default;
+      }
+    </style>
+
+    <script>
+      function runSw() {
+        // Check for Service Worker browser support
+        if ('serviceWorker' in navigator === false) {
+          console.log('Service worker is not supported');
+          return false;
+        }
+
+        // Logic to load our produced `sw.js`
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(registration) {
+            registration.onupdatefound = function() {
+              if (navigator.serviceWorker.controller) {
+                var installingWorker = registration.installing;
+                installingWorker.onstatechange = function() {
+                  switch (installingWorker.state) {
+                    case 'installed':
+                      break;
+                    case 'redundant':
+                      throw new Error('The installing service worker became redundant.');
+                    default:
+                      // Ignore
+                  }
+                };
+              }
+            };
+          }).catch(function(e) {
+            console.error('Error during service worker registration:', e);
+          });
+      }
+
+      runSw();
+    </script>
+  </head>
+  <body>
+    <h1>Webpack + Workbox</h1>
+
+    <script src="main.bundle.js"></script>
+  </body>
+</html>
